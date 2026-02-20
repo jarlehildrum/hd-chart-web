@@ -446,7 +446,11 @@
                 const chart = data.chart || data;
                 renderChart(chart, data.utcBirthDate);
             } catch (err) {
-                showError(err.message || 'Failed to connect to API');
+                if (err.message && err.message.includes('Failed to fetch')) {
+                    showError(`Could not reach API at ${apiUrl}. Check the API URL and make sure the server is running. (${err.message})`);
+                } else {
+                    showError(err.message || 'Failed to connect to API');
+                }
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Calculate Chart';
