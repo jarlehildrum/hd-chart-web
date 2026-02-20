@@ -433,6 +433,8 @@
             try {
                 const resp = await fetch(`${apiUrl}/api/chart`, {
                     method: 'POST',
+                    mode: 'cors',
+                    credentials: 'omit',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ birthDate: dateTime, birthPlace })
                 });
@@ -446,10 +448,10 @@
                 const chart = data.chart || data;
                 renderChart(chart, data.utcBirthDate);
             } catch (err) {
-                if (err.message && err.message.includes('Failed to fetch')) {
-                    showError(`Could not reach API at ${apiUrl}. Check the API URL and make sure the server is running. (${err.message})`);
+                if (err.name === 'TypeError') {
+                    showError(`Network error: Could not reach API at ${apiUrl}. Error: ${err.message}. Try opening the API URL directly in a new tab first to verify it works.`);
                 } else {
-                    showError(err.message || 'Failed to connect to API');
+                    showError(`${err.name}: ${err.message}`);
                 }
             } finally {
                 btn.disabled = false;
